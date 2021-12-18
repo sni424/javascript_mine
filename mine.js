@@ -118,6 +118,36 @@ function countMine(rowIndex, columnIndex) {
 };
 //근처 마인갯수 세기 함수끝
 
+//열기 함수
+function open(rowIndex, columnIndex) {
+    const childrenTarget = body.children[rowIndex].children[columnIndex];
+    const count = countMine(rowIndex, columnIndex);
+    childrenTarget.innerText = count || " ";
+    childrenTarget.style.backgroundColor = "white";
+    data[rowIndex][columnIndex] = count;
+    return count;
+};
+//열기 함수 끝
+
+function isNormal(cell) {
+    return cell === CODE.NORMAL;
+};
+
+//한번에 열기 함수
+function openAround(rowIndex, columnIndex) {
+    const count = open(rowIndex, columnIndex);
+    if (count === 0) {
+        isNormal(data[rowIndex - 1]?.[columnIndex - 1]) && open(rowIndex - 1, columnIndex - 1);
+        isNormal(data[rowIndex - 1]?.[columnIndex]) && open(rowIndex - 1, columnIndex);
+        isNormal(data[rowIndex - 1]?.[columnIndex + 1]) && open(rowIndex - 1, columnIndex + 1);
+        isNormal(data[rowIndex]?.[columnIndex - 1]) && open(rowIndex, columnIndex - 1);
+        isNormal(data[rowIndex]?.[columnIndex + 1]) && open(rowIndex, columnIndex + 1);
+        isNormal(data[rowIndex + 1]?.[columnIndex - 1]) && open(rowIndex + 1, columnIndex - 1);
+        isNormal(data[rowIndex + 1]?.[columnIndex]) && open(rowIndex + 1, columnIndex);
+        isNormal(data[rowIndex + 1]?.[columnIndex + 1]) && open(rowIndex + 1, columnIndex + 1);
+    }
+};
+
 //좌클릭 함수
 function leftClick(event) {
     const tdTarget = event.target;
@@ -125,12 +155,13 @@ function leftClick(event) {
     const columnIndex = tdTarget.cellIndex;
     const columnData = data[rowIndex][columnIndex];
     if (columnData === CODE.NORMAL) {
-        const count = countMine(rowIndex, columnIndex);//지뢰가 근처에 몇개있는지.
-        //countMine에 몇번째칸 몇번째 줄인지 정보는 넘김 rowIndex, columnIndex
-        tdTarget.innerText = count || "";//근처에 지뢰가 있으면 count없으면 공백
-        //0을 표기하고 싶으면 ||대신에 ??사용
-        tdTarget.style.backgroundColor = "white"
-        data[rowIndex][columnIndex] = count;
+        // const count = countMine(rowIndex, columnIndex);//지뢰가 근처에 몇개있는지.
+        // //countMine에 몇번째칸 몇번째 줄인지 정보는 넘김 rowIndex, columnIndex
+        // tdTarget.innerText = count || "";//근처에 지뢰가 있으면 count없으면 공백
+        // //0을 표기하고 싶으면 ||대신에 ??사용
+        // tdTarget.style.backgroundColor = "white"
+        // data[rowIndex][columnIndex] = count;
+        openAround(rowIndex, columnIndex)
     } else if (columnData === CODE.MINE)//마인이 있으면 
     {
         alert("꽝 다음기회에");
